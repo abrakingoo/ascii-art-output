@@ -11,18 +11,13 @@ import (
 )
 
 func main() {
+	args := os.Args[1:]
 	generatedArt := ""
-	output_file, err := os.Create("output.txt")
-	ascii.ErrHandler(err)
-	defer output_file.Close()
-	//
-	if len(os.Args) != 2 {
-		fmt.Println("Usage: go run . <input string>")
-		return
-	}
 
-	input := os.Args[1] // user input
-	// fmt.Println(len(input))
+	val, err := ascii.Checkflag(args)
+	ascii.ErrHandler(err)
+	input := args[1]
+	//
 
 	if input == "" {
 		return
@@ -31,11 +26,16 @@ func main() {
 		generatedArt += "\n"
 		return
 	}
+
+	output_file, err := os.Create(val[0])
+	ascii.ErrHandler(err)
+	defer output_file.Close()
+
 	input = ascii.HandleBackspace(input)
 	input = strings.ReplaceAll(string(input), "\\t", "   ") // handling the tab sequence
 
 	// Read the ascii art text file
-	file, err := os.ReadFile("standard.txt")
+	file, err := os.ReadFile(val[1] + ".txt")
 	if err != nil {
 		fmt.Println(err)
 		return
