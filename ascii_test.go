@@ -3,20 +3,18 @@ package main
 import (
 	"os"
 	"os/exec"
-	"strings"
 	"testing"
 
 	ascii "ascii/utilities"
 )
 
 func TestExecCommand(t *testing.T) {
-	file, err := os.ReadFile("standard.txt")
-	if err != nil {
-		t.Error(err)
-		os.Exit(1)
+	type Args struct {
+		str  string
+		file string
 	}
+
 	fileString := ""
-	fileData := strings.Split(string(file), "\n")
 
 	// Create files
 	expected, err := os.Create("expected.txt")
@@ -32,18 +30,43 @@ func TestExecCommand(t *testing.T) {
 	defer got.Close()
 
 	// Modify here : Input your test input string
-	testStrings := []string{
-		"hello",
+	testStrings := []Args{
+		{"hello", ""},
+		{"hello", "standard"},
+		{"hello", "thinkertoy"},
+		{"hello", "shadow"},
 	}
-
 	// Define the commands to execute here:
 	commands := []*exec.Cmd{
 		exec.Command("go", "run", ".", "hello"),
+		exec.Command("go", "run", ".", "hello", "standard"),
+		exec.Command("go", "run", ".", "hello", "thinkertoy"),
+		exec.Command("go", "run", ".", "hello", "shadow"),
 	}
 
 	//
-	for i := range testStrings {
-		inputParts, err := ascii.HandleNewLine(testStrings[i])
+	for i, val := range testStrings {
+		// file to use
+		fileData := []string{}
+		if val.file == "" {
+			file, err := os.ReadFile("standard.txt")
+			if err != nil {
+				t.Error(err)
+				os.Exit(1)
+			}
+			fileData = append(fileData, ascii.StringContain(string(file))...)
+
+		} else {
+			filename := val.file + ".txt"
+			file, err := os.ReadFile(filename)
+			if err != nil {
+				t.Error(err)
+				os.Exit(1)
+			}
+			fileData = append(fileData, ascii.StringContain(string(file))...)
+		}
+
+		inputParts, err := ascii.HandleNewLine(testStrings[i].str)
 		if err != nil {
 			t.Error(err)
 		}
