@@ -3,6 +3,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -12,11 +13,17 @@ import (
 
 func main() {
 	file_name := ""
+	banner := ""
 
 	if len(os.Args) != 4 {
 		fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
 		return
 	}
+
+	flag.StringVar(&banner, "output", "", "")
+	flag.Parse()
+
+	fmt.Println(banner)
 
 	input := os.Args[2] // user input
 
