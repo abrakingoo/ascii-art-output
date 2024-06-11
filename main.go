@@ -14,6 +14,7 @@ import (
 func main() {
 	file_name := ""
 	banner := ""
+	ascii_art := ""
 
 	if len(os.Args) != 4 {
 		fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
@@ -70,17 +71,19 @@ func main() {
 
 	for _, part := range inputParts {
 		if part == "" {
-			fmt.Println() // Print a newline if the part is empty (i.e., consecutive newline characters)
+			ascii_art += "\n" // Print a newline if the part is empty (i.e., consecutive newline characters)
 			continue
 		}
 		for i := 0; i < 8; i++ { // this loop is responsible for the height of each character
 			for _, char := range part { // iterates through each character of the current word
 				startingIndex := ascii.GetStartingIndex(int(char)) // obtaining the starting position of the char
 				if startingIndex >= 0 {
-					fmt.Print(fileData[startingIndex+i]) // printing the character line by line
+					ascii_art += fileData[startingIndex+i] // printing the character line by line
 				}
 			}
-			fmt.Println() // printing a new line after printing each line of the charcter
+			ascii_art += "\n" // printing a new line after printing each line of the charcter
 		}
 	}
+
+	os.WriteFile(banner, []byte(ascii_art), 0o644)
 }
