@@ -23,7 +23,14 @@ func main() {
 	flag.StringVar(&banner, "output", "", "")
 	flag.Parse()
 
-	fmt.Println(banner)
+	if !strings.Contains(os.Args[1], "--output=") {
+		fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
+		return
+	}
+	if !strings.HasSuffix(os.Args[1], ".txt") {
+		fmt.Println("Usage: --output=<fileName.txt> only files ending with .txt are allowed")
+		return
+	}
 
 	input := os.Args[2] // user input
 
