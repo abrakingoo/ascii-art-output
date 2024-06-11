@@ -11,31 +11,31 @@ import (
 )
 
 func main() {
-	args := os.Args[1:]
-	generatedArt := ""
+	file_name := ""
 
-	val, err := ascii.Checkflag(args)
-	ascii.ErrHandler(err)
-	input := args[1]
-	//
+	if len(os.Args) != 4 {
+		fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
+		return
+	}
+
+	input := os.Args[2] // user input
+
+	file_name = os.Args[3] + ".txt"
+
+	// fmt.Println(len(input))
 
 	if input == "" {
 		return
 	}
 	if input == "\\n" {
-		generatedArt += "\n"
+		fmt.Println()
 		return
 	}
-
-	output_file, err := os.Create(val[0])
-	ascii.ErrHandler(err)
-	defer output_file.Close()
-
 	input = ascii.HandleBackspace(input)
 	input = strings.ReplaceAll(string(input), "\\t", "   ") // handling the tab sequence
 
 	// Read the ascii art text file
-	file, err := os.ReadFile(val[1] + ".txt")
+	file, err := os.ReadFile(strings.ToLower(file_name))
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -56,19 +56,17 @@ func main() {
 
 	for _, part := range inputParts {
 		if part == "" {
-			generatedArt += "\n" // Print a newline if the part is empty (i.e., consecutive newline characters)
+			fmt.Println() // Print a newline if the part is empty (i.e., consecutive newline characters)
 			continue
 		}
 		for i := 0; i < 8; i++ { // this loop is responsible for the height of each character
 			for _, char := range part { // iterates through each character of the current word
 				startingIndex := ascii.GetStartingIndex(int(char)) // obtaining the starting position of the char
 				if startingIndex >= 0 {
-					generatedArt += fileData[startingIndex+i] // printing the character line by line
+					fmt.Print(fileData[startingIndex+i]) // printing the character line by line
 				}
 			}
-			generatedArt += "\n" // printing a new line after printing each line of the charcter
+			fmt.Println() // printing a new line after printing each line of the charcter
 		}
 	}
-	_, err = output_file.WriteString(generatedArt)
-	ascii.ErrHandler(err)
 }
