@@ -35,7 +35,7 @@ func main() {
 
 	input := os.Args[2] // user input
 
-	file_name = os.Args[3] + ".txt"
+	file_name = "bannerfiles/" + os.Args[3] + ".txt"
 
 	// fmt.Println(len(input))
 
