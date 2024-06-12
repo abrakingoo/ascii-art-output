@@ -11,49 +11,51 @@ import (
 	ascii "ascii/utilities"
 )
 
+func main() {
+	file_name := ""    // Initialize variable for file name.
+	banner := ""       // Initialize variable for banner.
+	ascii_art := ""    // Initialize variable for ASCII art.
+	input := ""        // Initialize variable for user input.
+	art_switch := true // Initialize switch for ASCII art.
 
-	func main() {
-		file_name := ""     // Initialize variable for file name.
-		banner := ""        // Initialize variable for banner.
-		ascii_art := ""     // Initialize variable for ASCII art.
-		input := ""         // Initialize variable for user input.
-		art_switch := true // Initialize switch for ASCII art.
-	
-		// Check if only one argument is provided from command line.
-		if len(os.Args[1:]) == 1 {
-			file_name = "bannerfiles/standard.txt"
-			input = os.Args[1]
-			art_switch = false
-		}
-	
-		// Check if the number of arguments is not equal to 4 and ASCII art switch is on.
-		if len(os.Args) != 4 && art_switch {
-			fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
-			return
-		}
-	
-		// Check if more than two arguments are provided.
-		if len(os.Args) > 2 {
-			input = os.Args[2]                                     // Set user input.
-			file_name = "bannerfiles/" + os.Args[3] + ".txt" // Set file name.
-		}
-	
-		flag.StringVar(&banner, "output", "", "") // Set banner to the value of the 'output' flag.
-		flag.Parse()                               // Parse command line flags.
-	
-		// Check if the first argument does not contain '--output=' and ASCII art switch is on.
-		if !strings.Contains(os.Args[1], "--output=") && art_switch {
-			fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
-			return
-		}
-	
-		// Check if the first argument does not have a suffix of '.txt' and ASCII art switch is on.
-		if !strings.HasSuffix(os.Args[1], ".txt") && art_switch {
-			fmt.Println("Usage: --output=<fileName.txt> only files ending with .txt are allowed")
-			return
-		}
-	
-	
+	// Check if only one argument is provided from command line.
+	if len(os.Args[1:]) == 1 {
+		file_name = "bannerfiles/standard.txt"
+		input = os.Args[1]
+		art_switch = false
+	}
+
+	// Check if the number of arguments is not equal to 4 and ASCII art switch is on.
+	if len(os.Args) != 4 && art_switch {
+		fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
+		return
+	}
+
+	// Check if more than two arguments are provided.
+	if len(os.Args) > 2 {
+		input = os.Args[2]                               // Set user input.
+		file_name = "bannerfiles/" + os.Args[3] + ".txt" // Set file name.
+	}
+
+	flag.StringVar(&banner, "output", "", "") // Set banner to the value of the 'output' flag.
+	flag.Parse()                              // Parse command line flags.
+
+	if strings.Contains(banner, "standard.txt") || strings.Contains(banner, "shadow.txt") || strings.Contains(banner, "thinkertoy.txt") {
+		fmt.Println("Unacceptable filename")
+		return
+	}
+
+	// Check if the first argument does not contain '--output=' and ASCII art switch is on.
+	if !strings.Contains(os.Args[1], "--output=") && art_switch {
+		fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
+		return
+	}
+
+	// Check if the first argument does not have a suffix of '.txt' and ASCII art switch is on.
+	if !strings.HasSuffix(os.Args[1], ".txt") && art_switch {
+		fmt.Println("Usage: --output=<fileName.txt> only files ending with .txt are allowed")
+		return
+	}
 
 	// fmt.Println(len(input))
 
