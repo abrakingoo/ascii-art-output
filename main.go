@@ -40,8 +40,13 @@ func main() {
 	flag.StringVar(&banner, "output", "", "") // Set banner to the value of the 'output' flag.
 	flag.Parse()                              // Parse command line flags.
 
-	if strings.Contains(banner, "standard.txt") || strings.Contains(banner, "shadow.txt") || strings.Contains(banner, "thinkertoy.txt") {
-		fmt.Println("Unacceptable filename")
+	if strings.Contains(banner, "bannerfiles/") {
+		fmt.Println("Writing to that directory is restricted")
+		return
+	}
+
+	if strings.Contains(banner, "/") {
+		fmt.Println("Cannot create directory, only file name allowed")
 		return
 	}
 
