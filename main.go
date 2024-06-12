@@ -15,27 +15,38 @@ func main() {
 	file_name := ""
 	banner := ""
 	ascii_art := ""
+	input := ""
+	art_switch := true
+	if len(os.Args[1:]) == 1 {
+		file_name = "bannerfiles/standard.txt"
+		input = os.Args[1]
+		art_switch = false
+	}
 
-	if len(os.Args) != 4 {
+	if len(os.Args) != 4 && art_switch{
 		fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
 		return
+	}
+	
+	if len(os.Args) > 2 {
+
+		input = os.Args[2] // user input
+	
+		file_name = "bannerfiles/" + os.Args[3] + ".txt"
 	}
 
 	flag.StringVar(&banner, "output", "", "")
 	flag.Parse()
 
-	if !strings.Contains(os.Args[1], "--output=") {
+	if !strings.Contains(os.Args[1], "--output=") && art_switch{
 		fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard")
 		return
 	}
-	if !strings.HasSuffix(os.Args[1], ".txt") {
+	if !strings.HasSuffix(os.Args[1], ".txt") && art_switch {
 		fmt.Println("Usage: --output=<fileName.txt> only files ending with .txt are allowed")
 		return
 	}
 
-	input := os.Args[2] // user input
-
-	file_name = "bannerfiles/" + os.Args[3] + ".txt"
 
 	// fmt.Println(len(input))
 
@@ -78,10 +89,20 @@ func main() {
 			for _, char := range part { // iterates through each character of the current word
 				startingIndex := ascii.GetStartingIndex(int(char)) // obtaining the starting position of the char
 				if startingIndex >= 0 {
-					ascii_art += fileData[startingIndex+i] // printing the character line by line
+					if !art_switch{
+						fmt.Print(fileData[startingIndex+i]) 	
+					} else {
+
+						ascii_art += fileData[startingIndex+i] // printing the character line by line
+					}
 				}
 			}
-			ascii_art += "\n" // printing a new line after printing each line of the charcter
+			if !art_switch {
+				fmt.Println()
+			} else {
+
+				ascii_art += "\n" // printing a new line after printing each line of the charcter
+			}
 		}
 	}
 
