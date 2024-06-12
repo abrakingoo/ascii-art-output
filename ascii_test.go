@@ -3,11 +3,123 @@ package main
 import (
 	"os"
 	"os/exec"
+	"reflect"
 	"testing"
 
 	ascii "ascii/utilities"
 )
 
+func TestCheckIllegalChar(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   []string
+		want    []string
+		wantErr bool
+	}{
+		{
+			name:    "Valid ASCII",
+			input:   []string{"Hello", "World"},
+			want:    []string{"Hello", "World"},
+			wantErr: false,
+		},
+		{
+			name:    "Contains illegal character",
+			input:   []string{"Hello", "W\x1fold", "こんにちは、アーロンさん"},
+			want:    []string{},
+			wantErr: true,
+		},
+		{
+			name:    "Empty string",
+			input:   []string{""},
+			want:    []string{""},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ascii.CheckIllegalChar(tt.input)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("CheckIllegalChar() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("CheckIllegalChar() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestHandleNewLine(t *testing.T) {
+
+	tests := []struct {
+		name    string
+		input   string
+		want    []string
+		wantErr bool
+	}{
+		{
+			name:    "No newlines",
+			input:   "Hello World",
+			want:    []string{"Hello World"},
+			wantErr: false,
+		},
+		{
+			name:    "Single newline",
+			input:   "Hello\\nWorld",
+			want:    []string{"Hello", "World"},
+			wantErr: false,
+		},
+		{
+			name:    "Multiple newlines",
+			input:   "Hello\\nWorld\\nfrom\\nGo",
+			want:    []string{"Hello", "World", "from", "Go"},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ascii.HandleNewLine(tt.input)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("HandleNewLine() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("HandleNewLine() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestStringContain(t *testing.T) {
+	tests := []struct {
+		name string
+		s    string
+		want []string
+	}{
+		{
+			name: "Contains 'o'",
+			s:    "Hello\r\nWorld",
+			want: []string{"Hello", "World"},
+		},
+		{
+			name: "Does not contain 'o'",
+			s:    "Hi\nThere",
+			want: []string{"Hi", "There"},
+		},
+		{
+			name: "Empty string",
+			s:    "",
+			want: []string{""},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ascii.StringContain(tt.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("StringContain() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 func TestExecCommand(t *testing.T) {
 	type Args struct {
 		str  string
@@ -30,18 +142,18 @@ func TestExecCommand(t *testing.T) {
 	defer got.Close()
 
 	// Modify here : Input your test input string
-	testStrings := []Args{
+	testStrings := [4]Args{
 		{"hello", ""},
 		{"hello", "standard"},
 		{"hello", "thinkertoy"},
 		{"hello", "shadow"},
 	}
 	// Define the commands to execute here:
-	commands := []*exec.Cmd{
-		exec.Command("go", "run", ".", "hello"),
-		exec.Command("go", "run", ".", "hello", "standard"),
-		exec.Command("go", "run", ".", "hello", "thinkertoy"),
-		exec.Command("go", "run", ".", "hello", "shadow"),
+	commands := [4]*exec.Cmd{
+		exec.Command("go", "run", ".", "--output=test01.txt", "hello", "standard"),
+		exec.Command("go", "run", ".", "--output=test02.txt", "hello", "thinkertoy"),
+		exec.Command("go", "run", ".", "--output=test03.txt", "hello", "shadow"),
+		exec.Command("go", "run", ".", "--output=test04.txt", "hello", "standard"),
 	}
 
 	//
